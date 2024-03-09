@@ -7,14 +7,14 @@ pygame.init()
 # Set up the screen
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Devanagari Script Learning Game")
+pygame.display.set_caption("Indic Script Guessing Game")
 
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Define fonts
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 48)
 
 # Define Devanagari characters and their corresponding English transliterations
 characters = {
@@ -31,26 +31,45 @@ characters = {
 def display_character():
     character, transliteration = random.choice(list(characters.items()))
     text_surface = font.render(character, True, BLACK)
-    transliteration_surface = font.render(f"({transliteration})", True, BLACK)
-    return text_surface, transliteration_surface
+    return text_surface, transliteration
 
 # Main game loop
-running = True
-while running:
-    screen.fill(WHITE)
+def main():
+    running = True
+    score = 0
+    while running:
+        screen.fill(WHITE)
 
-    # Display a random Devanagari character and its transliteration
-    character_surface, transliteration_surface = display_character()
-    screen.blit(character_surface, (WIDTH // 2 - character_surface.get_width() // 2, HEIGHT // 3))
-    screen.blit(transliteration_surface, (WIDTH // 2 - transliteration_surface.get_width() // 2, HEIGHT // 2))
+        # Display a random Devanagari character
+        character_surface, transliteration = display_character()
+        screen.blit(character_surface, (WIDTH // 2 - character_surface.get_width() // 2, HEIGHT // 3))
 
-    # Update the display
-    pygame.display.flip()
+        # Display the player's score
+        score_surface = font.render(f"Score: {score}", True, BLACK)
+        screen.blit(score_surface, (20, 20))
 
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        # Update the display
+        pygame.display.flip()
 
-# Quit pygame
-pygame.quit()
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_RETURN:
+                    # Player's guess
+                    player_input = input("Enter your guess (in English): ").strip().lower()
+                    # Check if the guess is correct
+                    if player_input == transliteration:
+                        score += 1
+                        print("Correct!")
+                    else:
+                        print(f"Incorrect! The correct answer is '{transliteration}'")
+
+    # Quit pygame
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
